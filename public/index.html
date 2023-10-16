@@ -11,8 +11,8 @@
     management app"
     />
     <meta http-equiv="refresh" content="60" />
-    <link rel="stylesheet" href="/reset.css" />
-    <link rel="stylesheet" href="/main.css" />
+    <link type="text/html" href="/reset.css" />
+    <link rel="stylesheet" href="main.css" />
   </head>
   <body>
     <!-- This is a Semantic HTML Change -->
@@ -112,12 +112,15 @@
                     </p>
                 </article>
 
-                <article>
-                  <h1>New Chart(D3JS)</h1>
+                
+                  <article>
+                  <h1>Bulbul's D3JS Chart</h1>
                   <p>
-                <div id="myPieChart"></div>
-                </p>
-                </article>
+                      <div id="pie-chart"></div>
+                  </p>
+              </article>
+          
+
             </div>
         </div>
     </main>
@@ -143,15 +146,7 @@
         datasets: [
           {
             data: [],
-            backgroundColor: [
-              "#ffcd56",
-              "#ff6384",
-              "#36a2eb",
-              "#fd6b19",
-              "#83FF33",
-              "#F633FF",
-              "#FF3333",
-            ],
+            backgroundColor: [],
           },
         ],
         labels: [],
@@ -159,7 +154,7 @@
 
       var myDataSource = [];
 
-      var svg = d3.select("#myPieChart").append("svg").append("g");
+      var svg = d3.select("#pie-chart").append("svg").append("g");
 
       svg.append("g").attr("class", "slices");
       svg.append("g").attr("class", "labels");
@@ -194,9 +189,9 @@
 
       var titles = []
       var getTitles = ()=>{
-        axios.get("/budget").then(function (res) {
-            for(var i=0;i<res.data.myBudget.length;i++){
-                titles.push(res.data.myBudget[i].title)
+        axios.get("http://localhost:3000/budget").then(function (res) {
+            for(var i=0;i<res.data.length;i++){
+                titles.push(res.data[i].title)
             }
         })
       }
@@ -205,16 +200,7 @@
       var myColor = d3.scale
         .ordinal()
         .domain(titles)
-        .range([
-          "#ffcd56",
-          "#ff6384",
-          "#36a2eb",
-          "#fd6b19",
-          "#83FF33",
-          "#F633FF",
-          "#FF3333",
-          "#a38080"
-        ]);
+        .range(dataSource.datasets[0].backgroundColor);
 
         function createChart() {
         var ctx = document.getElementById("myChart").getContext("2d");
@@ -324,15 +310,15 @@
 
       
       function getBudget() {
-        axios.get("/budget").then(function (res) {
+        axios.get("http://localhost:3000/budget").then(function (res) {
         //   console.log(res.data.myBudget);
-          for (var i = 0; i < res.data.myBudget.length; i++) {
-            dataSource.datasets[0].data[i] = res.data.myBudget[i].budget;
-            dataSource.labels[i] = res.data.myBudget[i].title;
-
+          for (var i = 0; i < res.data.length; i++) { 
+            dataSource.datasets[0].data[i] = res.data[i].budget;
+            dataSource.labels[i] = res.data[i].title;
+            dataSource.datasets[0].backgroundColor[i] = res.data[i].color;
             myDataSource.push({
-              "title": res.data.myBudget[i].title,
-              "budget": res.data.myBudget[i].budget,
+              "title": res.data[i].title,
+              "budget": res.data[i].budget,
             });
           }
           createChart();
